@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                              http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>io.github.chriswhiteley</groupId>
@@ -17,36 +18,47 @@
         <module>event-router-kafka-micronaut</module>
     </modules>
 
-    <!-- ================================================= -->
-    <!-- Properties                                       -->
-    <!-- ================================================= -->
     <properties>
-        <!-- Java -->
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <!-- Core dependency versions -->
+        <!-- Dependency versions -->
         <slf4j.version>2.0.16</slf4j.version>
+        <lombok.version>1.18.36</lombok.version>
+        <junit.version>5.11.3</junit.version>
         <jackson.version>2.18.1</jackson.version>
+        <jakarta.inject.version>2.0.1</jakarta.inject.version>
+        <cws.messaging.version>1.0.2</cws.messaging.version>
 
         <!-- Plugin versions -->
         <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
         <maven.surefire.plugin.version>3.2.5</maven.surefire.plugin.version>
     </properties>
 
-    <!-- ================================================= -->
-    <!-- Dependency Management                            -->
-    <!-- ================================================= -->
     <dependencyManagement>
         <dependencies>
-
-            <!-- SLF4J API only (no bindings here) -->
+            <!-- Logging API -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>${slf4j.version}</version>
+            </dependency>
+
+            <!-- Lombok -->
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <!-- Jakarta Inject -->
+            <dependency>
+                <groupId>jakarta.inject</groupId>
+                <artifactId>jakarta.inject-api</artifactId>
+                <version>${jakarta.inject.version}</version>
             </dependency>
 
             <!-- Jackson BOM -->
@@ -58,6 +70,26 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- JUnit -->
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-engine</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- External messaging lib -->
+            <dependency>
+                <groupId>com.cwsoft</groupId>
+                <artifactId>cws-messaging</artifactId>
+                <version>${cws.messaging.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
