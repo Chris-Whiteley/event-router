@@ -114,11 +114,11 @@ public class EventDispatcher {
                 return event.getDestinationServices().contains(remoteHandler.getRemoteService());
             }
 
-            if (event.getSiteInContext().isBlank()) return true;
+            if (event.getDomainInContext().isBlank()) return true;
 
-            return RemoteHandler.sitesInSameBranch(
-                    remoteHandler.getRemoteServicesSite(),
-                    event.getSiteInContext()
+            return RemoteHandler.domainsInSameBranch(
+                    remoteHandler.getRemoteServicesDomain(),
+                    event.getDomainInContext()
             );
         }
 

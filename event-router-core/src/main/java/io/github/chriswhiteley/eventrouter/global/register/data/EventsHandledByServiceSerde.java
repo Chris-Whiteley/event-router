@@ -1,6 +1,6 @@
 package io.github.chriswhiteley.eventrouter.global.register.data;
 
-import com.cwsoft.eventrouter.global.SerializationException;
+import io.github.chriswhiteley.eventrouter.global.SerializationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +28,7 @@ public class EventsHandledByServiceSerde {
         } catch (JsonProcessingException | RuntimeException e) {
             log.error("Serialization error for EventsHandledByService [{}:{}], size={}",
                     eventsHandledByService.serviceId(),
-                    eventsHandledByService.serviceSite(),
+                    eventsHandledByService.serviceDomain(),
                     eventsHandledByService.size(),
                     e);
 

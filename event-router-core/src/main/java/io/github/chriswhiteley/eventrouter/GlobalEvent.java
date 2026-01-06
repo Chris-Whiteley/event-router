@@ -21,7 +21,8 @@ public class GlobalEvent<E> extends Event<E> {
     @Setter
     private String sourceJson;
     @Setter
-    private Class sourceClass;
+    private Class<?> sourceClass;
+
 
     @Override
     public E getSource(TypeReference<E> sourceTypeRef) {
@@ -29,21 +30,24 @@ public class GlobalEvent<E> extends Event<E> {
             try {
                 this.source = (E) getObjectMapper().readValue(sourceJson, sourceTypeRef);
             } catch (JsonProcessingException e) {
-                log.error("Error decoding Event from JSON string {}", sourceJson, e);
-                return null;
+                throw new IllegalStateException(
+                        "Failed to deserialize event source for event " + getName(), e
+                );
             }
         }
-
         return this.source;
     }
+
 
     public E getSource() {
         if (this.source == null && sourceJson != null) {
             try {
                 this.source = (E) getObjectMapper().readValue(sourceJson, sourceClass);
             } catch (JsonProcessingException e) {
-                log.error("Error decoding Event from JSON string {}", sourceJson, e);
-                return null;
+                throw new IllegalStateException(
+                        "Failed to deserialize event source for event " + getName(), e
+                );
+
             }
         }
 
@@ -54,12 +58,16 @@ public class GlobalEvent<E> extends Event<E> {
         GlobalEventBuilder builder = GlobalEvent.globalBuilder();
         builder.name(e.getName());
 
-        if (e instanceof Event) {
-            Event event = (Event) e;
-            builder.destinationServices(event.destinationServices);
-            builder.source(event.getSource());
+        if (e instanceof GlobalEvent ge) {
+            builder.source(ge.source);
+            builder.sourceJson(ge.sourceJson);
+            builder.sourceClass(ge.sourceClass);
+            builder.destinationServices(ge.destinationServices);
+        } else if (e instanceof Event ev) {
+            builder.source(ev.getSource());
+            builder.destinationServices(ev.destinationServices);
         } else {
-            builder.destinationServices(Collections.EMPTY_SET);
+            builder.destinationServices(Set.of());
         }
 
         builder.fromServiceId(fromServiceId);
@@ -67,8 +75,15 @@ public class GlobalEvent<E> extends Event<E> {
     }
 
     @Builder(builderMethodName = "globalBuilder")
-    GlobalEvent(String name, E source, Set<String> destinationServices, String fromServiceId, String sourceJson, Class sourceClass) {
+    GlobalEvent(String name, E source, Set<String> destinationServices,
+                String fromServiceId, String sourceJson, Class<?> sourceClass) {
+
         super(name, source, destinationServices, null);
+
+        if (fromServiceId == null || fromServiceId.isBlank()) {
+            throw new IllegalArgumentException("fromServiceId must not be blank");
+        }
+
         this.sourceJson = sourceJson;
         this.sourceClass = sourceClass;
         this.fromServiceId = fromServiceId;

@@ -1,6 +1,6 @@
 package io.github.chriswhiteley.eventrouter.global.register.persistence;
 
-import com.cwsoft.eventrouter.global.register.data.EventsHandledByRemoteServices;
+import io.github.chriswhiteley.eventrouter.global.register.data.EventsHandledByRemoteServices;
 
 public interface RemoteServiceHandledEventsStore {
     EventsHandledByRemoteServices fetch();

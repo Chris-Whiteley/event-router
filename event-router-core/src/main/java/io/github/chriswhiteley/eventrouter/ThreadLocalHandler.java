@@ -14,66 +14,83 @@ import java.util.concurrent.BlockingQueue;
 public class ThreadLocalHandler extends LocalHandler {
 
     private final String handledEventName;
-    private final BlockingQueue<NamedEvent> eventQueue = new ArrayBlockingQueue<>(10_0000);
+    private final BlockingQueue<NamedEvent> eventQueue =
+            new ArrayBlockingQueue<>(10_000);
 
+    private final Thread queueConsumerThread;
 
     @Builder
-    private ThreadLocalHandler(String handledEventName, Object handlerObject, Method handlerMethod, int noOfParameters) {
-       super(handlerObject, handlerMethod, noOfParameters);
-       this.handledEventName = handledEventName;
+    private ThreadLocalHandler(
+            String handledEventName,
+            Object handlerObject,
+            Method handlerMethod,
+            int noOfParameters
+    ) {
+        super(handlerObject, handlerMethod, noOfParameters);
+        this.handledEventName = handledEventName;
 
-        // now set up queue monitor thread to monitor the queue for events
-        Thread queueConsumerThread = new Thread(() -> runQueueConsumer());
-        queueConsumerThread.start();
+        // Start a virtual thread to consume events
+        this.queueConsumerThread = Thread.startVirtualThread(this::runQueueConsumer);
     }
 
     private void runQueueConsumer() {
-        Thread.currentThread().setName("EVT-" + handledEventName + "-" + handlerMethod.getName());
+        Thread.currentThread()
+              .setName("EVT-" + handledEventName + "-" + handlerMethod.getName());
 
-        var timeLastQueueSizeReport = System.currentTimeMillis();
+        long lastQueueSizeReport = System.currentTimeMillis();
 
-        while (!Thread.interrupted()) {
-            NamedEvent event = null;
-            try {
-                event = eventQueue.take();
+        try {
+            while (!Thread.currentThread().isInterrupted()) {
+                NamedEvent event = eventQueue.take(); // blocks efficiently
                 invoke(event);
 
-                if (eventQueue.size() > 10 && (System.currentTimeMillis() - timeLastQueueSizeReport) > 60_000) {
-                    log.info("event queue size is > 10, size is {}", eventQueue.size());
-                    timeLastQueueSizeReport = System.currentTimeMillis();
+                if (eventQueue.size() > 10
+                        && System.currentTimeMillis() - lastQueueSizeReport > 60_000) {
+                    log.info("Event queue size is {}, handler={}",
+                            eventQueue.size(), handledEventName);
+                    lastQueueSizeReport = System.currentTimeMillis();
                 }
-
-
-            } catch (InterruptedException e) {
-            } catch (Exception e) {
-                log.error ("error processing event from queue, {}", event);
             }
+        } catch (InterruptedException e) {
+            // Restore interrupt flag and exit cleanly
+            Thread.currentThread().interrupt();
+            log.debug("Queue consumer interrupted, shutting down: {}", handledEventName);
+        } catch (Exception e) {
+            log.error("Unhandled error in queue consumer for handler {}", handledEventName, e);
         }
     }
 
     @Override
-    public <E extends NamedEvent> void handle(E e){
+    public <E extends NamedEvent> void handle(E event) {
         try {
-             eventQueue.put(e);
-        } catch (InterruptedException interruptedException) {
+            eventQueue.put(event); // back-pressure when full
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            log.warn("Interrupted while enqueuing event {}", event);
         }
+    }
+
+    /**
+     * Gracefully stops the handler thread.
+     */
+    public void shutdown() {
+        queueConsumerThread.interrupt();
     }
 
     @Override
     public Set<Class<? extends NamedEvent>> events() {
-        // if the handler method takes no parameters, we can't infer the event type;
-        // so fall back to NamedEvent (means "handles all")
+        // No parameters → handles all events
         if (noOfParameters == 0) {
             return Set.of(NamedEvent.class);
         }
 
-        // otherwise extract from the single method parameter
         Class<?> paramType = handlerMethod.getParameterTypes()[0];
 
         if (!NamedEvent.class.isAssignableFrom(paramType)) {
             throw new IllegalStateException(
                     "Handler method parameter " + paramType.getName()
-                            + " is not a NamedEvent subtype");
+                            + " is not a NamedEvent subtype"
+            );
         }
 
         @SuppressWarnings("unchecked")
@@ -82,5 +99,4 @@ public class ThreadLocalHandler extends LocalHandler {
 
         return Set.of(eventClass);
     }
-
 }

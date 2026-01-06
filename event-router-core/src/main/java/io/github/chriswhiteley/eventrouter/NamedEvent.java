@@ -15,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.Set;
 
 @Slf4j
@@ -32,45 +31,53 @@ public class NamedEvent {
     @Singular
     protected Set<String> destinationServices; // used to specify specific services as the destination of this event
 
-    protected String siteInContext;
+    protected String domainInContext;
 
-    public String getSiteInContext() {
-        return (siteInContext == null)?"":siteInContext;
+    public String getDomainInContext() {
+        return (domainInContext == null)?"": domainInContext;
     }
-
 
     private String encoded;
     private byte[] encodedBytes;
 
     public NamedEvent(String name) {
-        this.name = name;
-        this.destinationServices = Collections.EMPTY_SET;
-        this.siteInContext = "";
+        this.name = requireValidName(name);
+        this.destinationServices = Set.of();
+        this.domainInContext = "";
     }
 
     public NamedEvent(String name, Set<String> destinationServices) {
-        this.name = name;
-        this.destinationServices = destinationServices;
-        this.siteInContext = "";
+        this.name = requireValidName(name);
+        this.destinationServices = destinationServices == null
+                ? Set.of()
+                : Set.copyOf(destinationServices);
+        this.domainInContext = "";
     }
 
-    @Builder (builderMethodName = "namedBuilder")
-    public NamedEvent(String name, boolean retryOnFailure, @Singular Set<String> destinationServices, String siteInContext) {
-        this.name = name;
+    @Builder(builderMethodName = "namedBuilder")
+    public NamedEvent(
+            String name,
+            boolean retryOnFailure,
+            @Singular Set<String> destinationServices,
+            String domainInContext
+    ) {
+        this.name = requireValidName(name);
         this.retryOnFailure = retryOnFailure;
-        this.destinationServices = destinationServices;
-        this.siteInContext = (siteInContext==null)?"":siteInContext;
+        this.destinationServices = destinationServices == null
+                ? Set.of()
+                : Set.copyOf(destinationServices);
+        this.domainInContext = domainInContext == null ? "" : domainInContext;
+    }
+
+    private static String requireValidName(String name) {
+        if (name == null || name.trim().isEmpty()) {
+            throw new IllegalArgumentException("Event name must not be null or blank");
+        }
+        return name.trim();
     }
 
     private static ObjectMapper objectMapper;
 
-    /**
-     * Note. We create our own ObjectMapper instance as can't use RebasoftApplicationContext
-     * since NamedEvent is also used in RMC which does not have RebasoftApplicationContext as it uses Spring.
-     * Also can't inject as this is value object rather than a Managed bean.
-     *
-     * @return ObjectMapper instance
-     */
     static ObjectMapper getObjectMapper() {
         if (objectMapper == null) objectMapper = JsonMapper.builder()
                 .addModule(new JavaTimeModule())

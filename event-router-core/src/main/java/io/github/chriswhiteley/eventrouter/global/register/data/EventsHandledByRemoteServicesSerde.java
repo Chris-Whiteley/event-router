@@ -1,6 +1,6 @@
 package io.github.chriswhiteley.eventrouter.global.register.data;
 
-import com.cwsoft.eventrouter.global.SerializationException;
+import io.github.chriswhiteley.eventrouter.global.SerializationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

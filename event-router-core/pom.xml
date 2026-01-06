@@ -18,8 +18,8 @@
     <dependencies>
         <!-- Internal messaging abstraction -->
         <dependency>
-            <groupId>com.cwsoft</groupId>
-            <artifactId>cws-messaging</artifactId>
+            <groupId>io.github.chriswhiteley</groupId>
+            <artifactId>messaging-core</artifactId>
         </dependency>
 
         <!-- Logging API only -->
@@ -33,12 +33,6 @@
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- Jakarta DI -->
-        <dependency>
-            <groupId>jakarta.inject</groupId>
-            <artifactId>jakarta.inject-api</artifactId>
         </dependency>
 
         <!-- Jackson -->

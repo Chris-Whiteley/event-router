@@ -29,8 +29,9 @@
         <lombok.version>1.18.36</lombok.version>
         <junit.version>5.11.3</junit.version>
         <jackson.version>2.18.1</jackson.version>
-        <jakarta.inject.version>2.0.1</jakarta.inject.version>
-        <cws.messaging.version>1.0.2</cws.messaging.version>
+        <cws.messaging.version>1.0.0</cws.messaging.version>
+        <kafka.version>3.9.0</kafka.version>
+
 
         <!-- Plugin versions -->
         <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
@@ -39,6 +40,14 @@
 
     <dependencyManagement>
         <dependencies>
+
+            <!-- Event Router Core -->
+            <dependency>
+                <groupId>io.github.chriswhiteley</groupId>
+                <artifactId>event-router-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- Logging API -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -54,13 +63,6 @@
                 <scope>provided</scope>
             </dependency>
 
-            <!-- Jakarta Inject -->
-            <dependency>
-                <groupId>jakarta.inject</groupId>
-                <artifactId>jakarta.inject-api</artifactId>
-                <version>${jakarta.inject.version}</version>
-            </dependency>
-
             <!-- Jackson BOM -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
@@ -68,6 +70,12 @@
                 <version>${jackson.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
 
             <!-- JUnit -->
@@ -86,10 +94,31 @@
 
             <!-- External messaging lib -->
             <dependency>
-                <groupId>com.cwsoft</groupId>
-                <artifactId>cws-messaging</artifactId>
+                <groupId>io.github.chriswhiteley</groupId>
+                <artifactId>messaging-core</artifactId>
                 <version>${cws.messaging.version}</version>
             </dependency>
+
+            <dependency>
+                <groupId>io.github.chriswhiteley</groupId>
+                <artifactId>kafka-messaging</artifactId>
+                <version>${cws.messaging.version}</version>
+            </dependency>
+
+
+            <!-- kafka -->
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-streams</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -99,6 +128,11 @@
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>${maven.surefire.plugin.version}</version>
+                </plugin>
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -106,13 +140,14 @@
                     <version>${maven.compiler.plugin.version}</version>
                     <configuration>
                         <release>${java.version}</release>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
                     </configuration>
-                </plugin>
-
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${maven.surefire.plugin.version}</version>
                 </plugin>
 
             </plugins>

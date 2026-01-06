@@ -15,9 +15,8 @@ import java.util.Set;
 
 
 @Getter
-@ToString (callSuper = true, doNotUseGetters = true)
-@EqualsAndHashCode
-
+@ToString(callSuper = true, doNotUseGetters = true)
+@EqualsAndHashCode(callSuper = true)
 @Slf4j
 public class Event<E> extends NamedEvent {
     protected E source;
@@ -28,27 +27,35 @@ public class Event<E> extends NamedEvent {
     }
 
     @Builder
-    public Event(String name, E source, @Singular Set <String> destinationServices, String siteInContext) {
+    public Event(String name, E source, @Singular Set <String> destinationServices, String domainInContext) {
         super(name);
         this.source = source;
-        this.destinationServices = destinationServices;
-        this.siteInContext = (siteInContext == null)?"":siteInContext;
+        this.destinationServices =
+                (destinationServices == null) ? Set.of() : destinationServices;
+        this.domainInContext = (domainInContext == null)?"":domainInContext;
     }
 
     /**
-     * This method of obtaining the source value is to overcome the problem when sending
-     * a collection of objects (pojos) as an event.  Then we get the issue in use of generics and
-     * jackson JSON has trouble de-serializing as it doesn't have access to the generic type
-     * and the error java.util.LinkedHashMap cannot be cast to X is thrown.
+     * Returns the event source deserialized using the provided {@link TypeReference}.
+     * <p>
+     * This method exists to handle cases where the event payload contains generic types
+     * (e.g. {@code List<Foo>}). Due to Java type erasure, Jackson cannot infer the generic
+     * type information during deserialization and will otherwise deserialize collections
+     * as {@code Map} instances (e.g. {@code LinkedHashMap}).
+     * <p>
+     * Supplying a {@link TypeReference} preserves the full generic type information and
+     * allows correct deserialization of complex payloads.
      *
-     *   see also .... https://www.baeldung.com/jackson-linkedhashmap-cannot-be-cast
-     *
-     * @param sourceTypeRef
-     * @return the source object deserialized to the specified sourceTypeRef
+     * @param sourceTypeRef the Jackson type reference describing the expected source type
+     * @return the deserialized event source
      */
     public E getSource(TypeReference<E> sourceTypeRef) {
-        return null;  // meant to be overridden
+        throw new UnsupportedOperationException(
+                "TypeReference-based deserialization is not supported for events of type " + getClass().getName() + "."
+        );
     }
+
+
 
     public Event(String name, E source, String destinationService) {
         this(name, source, Set.of(destinationService), null);

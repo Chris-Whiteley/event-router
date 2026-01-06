@@ -12,11 +12,11 @@ public record EventsHandledByRemoteServices(
         this(new HashMap<>());
     }
 
-    public EventsHandledByService get(String serviceId, String serviceSite) {
+    public EventsHandledByService get(String serviceId, String serviceDomain) {
         if (handledEventsMap.containsKey(serviceId)) {
             return handledEventsMap.get(serviceId);
         }
-        return new EventsHandledByService(serviceId, serviceSite, null);
+        return new EventsHandledByService(serviceId, serviceDomain, null);
     }
 
     public void put(EventsHandledByService remoteServiceHandledEvents) {

@@ -2,16 +2,16 @@ package io.github.chriswhiteley.eventrouter;
 
 public interface  RemoteHandler extends Handler {
     String getRemoteService();
-    String getRemoteServicesSite();
+    String getRemoteServicesDomain();
 
     /**
-     * @param siteA - fully qualified site Name
-     * @param siteB - fully qualified site Name
-     * @return true if siteA and SiteB are in the same branch false otherwise
+     * @param domainA - domain name
+     * @param domainB - domain name
+     * @return true if domainA and domainB are in the same branch false otherwise
      */
-    static boolean sitesInSameBranch(String siteA, String siteB) {
-        if (siteA == null || siteA.isBlank()) return false;
-        if (siteB == null || siteB.isBlank()) return false;
-        return siteA.startsWith(siteB) || siteB.startsWith(siteA);
+    static boolean domainsInSameBranch(String domainA, String domainB) {
+        if (domainA == null || domainA.isBlank()) return false;
+        if (domainB == null || domainB.isBlank()) return false;
+        return domainA.startsWith(domainB) || domainB.startsWith(domainA);
     }
 }

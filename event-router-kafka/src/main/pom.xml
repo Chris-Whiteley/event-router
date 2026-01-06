@@ -16,40 +16,39 @@
     <packaging>jar</packaging>
 
     <name>event-router-kafka</name>
-    <description>Kafka integration for event-router</description>
+    <description>Kafka transport implementation for the event-router library</description>
 
     <dependencies>
-
         <!-- Core event-router -->
         <dependency>
             <groupId>io.github.chriswhiteley</groupId>
             <artifactId>event-router-core</artifactId>
         </dependency>
 
-        <!-- Messaging stack -->
+        <!-- Messaging abstraction -->
         <dependency>
             <groupId>io.github.chriswhiteley</groupId>
             <artifactId>messaging-core</artifactId>
         </dependency>
 
+        <!-- Kafka messaging implementation -->
         <dependency>
             <groupId>io.github.chriswhiteley</groupId>
             <artifactId>kafka-messaging</artifactId>
         </dependency>
 
-        <!-- Kafka -->
+        <!-- Kafka clients -->
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
         </dependency>
 
-        <!-- Jackson -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.apache.kafka</groupId>
+            <artifactId>kafka-streams</artifactId>
         </dependency>
 
-        <!-- Logging -->
+        <!-- Logging API only -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -65,10 +64,15 @@
         <!-- Tests -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

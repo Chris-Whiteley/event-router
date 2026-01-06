@@ -21,7 +21,7 @@ public class GlobalHandler implements RemoteHandler {
 
     private final String fromServiceId;
     private final String toServiceId;
-    private final String remoteServicesSite;
+    private final String remoteServicesDomain;
 
     /** 🔑 Explicit dependency */
     private final GlobalEventPublisher publisher;

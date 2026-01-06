@@ -1,14 +1,14 @@
 package io.github.chriswhiteley.eventrouter.global.register;
 
-import com.cwsoft.eventrouter.EventHandler;
-import com.cwsoft.eventrouter.EventHandlers;
-import com.cwsoft.eventrouter.RemoteHandler;
-import com.cwsoft.eventrouter.global.GlobalEventPublisher;
-import com.cwsoft.eventrouter.global.GlobalHandler;
-import com.cwsoft.eventrouter.global.register.data.EventsHandledByRemoteServices;
-import com.cwsoft.eventrouter.global.register.data.EventsHandledByService;
-import com.cwsoft.eventrouter.global.register.persistence.RemoteServiceHandledEventsStore;
-import com.cwsoft.messaging.ClosableConsumer;
+import io.github.chriswhiteley.eventrouter.EventHandler;
+import io.github.chriswhiteley.eventrouter.EventHandlers;
+import io.github.chriswhiteley.eventrouter.RemoteHandler;
+import io.github.chriswhiteley.eventrouter.global.GlobalEventPublisher;
+import io.github.chriswhiteley.eventrouter.global.GlobalHandler;
+import io.github.chriswhiteley.eventrouter.global.register.data.EventsHandledByRemoteServices;
+import io.github.chriswhiteley.eventrouter.global.register.data.EventsHandledByService;
+import io.github.chriswhiteley.eventrouter.global.register.persistence.RemoteServiceHandledEventsStore;
+import io.github.chriswhiteley.messaging.ClosableConsumer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
@@ -29,7 +29,7 @@ public class HandlersRegistrar {
     private final ClosableConsumer<EventsHandledByService> consumer;
     private final RemoteServiceHandledEventsStore handledEventsStore;
     private final String serviceId;
-    private final String serviceSiteName;
+    private final String serviceDomainName;
     private final GlobalEventPublisher globalEventPublisher;
 
     private ExecutorService executor;
@@ -41,14 +41,14 @@ public class HandlersRegistrar {
             ClosableConsumer<EventsHandledByService> consumer,
             RemoteServiceHandledEventsStore handledEventsStore,
             String serviceId,
-            String serviceSiteName,
+            String serviceDomainName,
             GlobalEventPublisher globalEventPublisher
     ) {
         this.eventHandlers = Objects.requireNonNull(eventHandlers);
         this.consumer = Objects.requireNonNull(consumer);
         this.handledEventsStore = Objects.requireNonNull(handledEventsStore);
         this.serviceId = Objects.requireNonNull(serviceId);
-        this.serviceSiteName = Objects.requireNonNull(serviceSiteName);
+        this.serviceDomainName = Objects.requireNonNull(serviceDomainName);
         this.globalEventPublisher = Objects.requireNonNull(globalEventPublisher);
     }
 
@@ -58,8 +58,8 @@ public class HandlersRegistrar {
 
     @EventHandler(name = "onStartup")
     public void init() {
-        if (serviceId.isBlank() || serviceSiteName.isBlank()) {
-            throw new IllegalArgumentException("serviceId and serviceSiteName must not be blank");
+        if (serviceId.isBlank() || serviceDomainName.isBlank()) {
+            throw new IllegalArgumentException("serviceId and serviceDomainName must not be blank");
         }
 
         log.info("Starting HandlersRegistrar consumer...");
@@ -112,7 +112,7 @@ public class HandlersRegistrar {
                                 log.info("CONSUMED {}", eventsHandledByService);
 
                                 if (!eventsHandledByService.serviceId().equals(this.serviceId)) {
-                                    updateHandlersForService(current.get(eventsHandledByService.serviceId(), eventsHandledByService.serviceSite()), eventsHandledByService);
+                                    updateHandlersForService(current.get(eventsHandledByService.serviceId(), eventsHandledByService.serviceDomain()), eventsHandledByService);
                                     current.put(eventsHandledByService);
                                     handledEventsStore.save(current);
                                 }
@@ -149,7 +149,7 @@ public class HandlersRegistrar {
                                 GlobalHandler.builder()
                                         .fromServiceId(serviceId)
                                         .toServiceId(service.serviceId())
-                                        .remoteServicesSite(service.serviceSite())
+                                        .remoteServicesDomain(service.serviceDomain())
                                         .publisher(globalEventPublisher)
                                         .build()
                         )
@@ -161,9 +161,9 @@ public class HandlersRegistrar {
             EventsHandledByService newEvents
     ) {
         var remoteServiceId = newEvents.serviceId();
-        var remoteSiteName = newEvents.serviceSite();
+        var remoteDomainName = newEvents.serviceDomain();
 
-        if (RemoteHandler.sitesInSameBranch(this.serviceSiteName, remoteSiteName)) {
+        if (RemoteHandler.domainsInSameBranch(this.serviceDomainName, remoteDomainName)) {
             Set<String> addedEvents = new HashSet<>(newEvents.handledEvents());
             addedEvents.removeAll(current.handledEvents());
 
@@ -176,7 +176,7 @@ public class HandlersRegistrar {
                             GlobalHandler.builder()
                                     .fromServiceId(serviceId)
                                     .toServiceId(remoteServiceId)
-                                    .remoteServicesSite(remoteSiteName)
+                                    .remoteServicesDomain(remoteDomainName)
                                     .publisher(globalEventPublisher)
                                     .build()
                     ));
@@ -187,7 +187,7 @@ public class HandlersRegistrar {
                             GlobalHandler.builder()
                                     .fromServiceId(serviceId)
                                     .toServiceId(remoteServiceId)
-                                    .remoteServicesSite(remoteSiteName)
+                                    .remoteServicesDomain(remoteDomainName)
                                     .build()
                     ));
         }

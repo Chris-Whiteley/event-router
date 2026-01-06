@@ -8,22 +8,22 @@ import java.util.List;
 
 public record EventsHandledByService(
         String serviceId,
-        String serviceSite,
+        String serviceDomain,
         Collection<String> handledEvents
 ) {
     @JsonCreator
     public EventsHandledByService(
             @JsonProperty("serviceId") String serviceId,
-            @JsonProperty("serviceSite") String serviceSite,
+            @JsonProperty("serviceDomain") String serviceDomain,
             @JsonProperty("handledEvents") Collection<String> handledEvents
     ) {
         if (serviceId == null || serviceId.isBlank())
             throw new IllegalArgumentException("Service ID cannot be null or blank");
-        if (serviceSite == null || serviceSite.isBlank())
-            throw new IllegalArgumentException("Service site cannot be null or blank");
+        if (serviceDomain == null || serviceDomain.isBlank())
+            throw new IllegalArgumentException("Service domain cannot be null or blank");
 
         this.serviceId = serviceId;
-        this.serviceSite = serviceSite;
+        this.serviceDomain = serviceDomain;
         this.handledEvents = (handledEvents != null)
                 ? List.copyOf(handledEvents)
                 : List.of();

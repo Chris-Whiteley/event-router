@@ -1,9 +1,9 @@
 package io.github.chriswhiteley.eventrouter.global.register;
 
-import com.cwsoft.eventrouter.EventHandler;
-import com.cwsoft.eventrouter.EventHandlers;
-import com.cwsoft.eventrouter.global.register.data.EventsHandledByService;
-import com.cwsoft.messaging.Producer;
+import io.github.chriswhiteley.eventrouter.EventHandler;
+import io.github.chriswhiteley.eventrouter.EventHandlers;
+import io.github.chriswhiteley.eventrouter.global.register.data.EventsHandledByService;
+import io.github.chriswhiteley.messaging.Producer;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Objects;
@@ -21,7 +21,7 @@ public class HandledProducer {
     private final Producer<EventsHandledByService> producer;
     private final EventHandlers eventHandlers;
     private final String serviceId;
-    private final String serviceSiteName;
+    private final String serviceDomain;
 
     private volatile EventsHandledByService latestData;
 
@@ -37,12 +37,12 @@ public class HandledProducer {
             Producer<EventsHandledByService> producer,
             EventHandlers eventHandlers,
             String serviceId,
-            String serviceSiteName
+            String serviceDomain
     ) {
         this.producer = Objects.requireNonNull(producer, "producer must not be null");
         this.eventHandlers = Objects.requireNonNull(eventHandlers, "eventHandlers must not be null");
         this.serviceId = Objects.requireNonNull(serviceId, "serviceId must not be null");
-        this.serviceSiteName = Objects.requireNonNull(serviceSiteName, "serviceSiteName must not be null");
+        this.serviceDomain = Objects.requireNonNull(serviceDomain, "serviceDomain must not be null");
     }
 
     @EventHandler(name = "onStartup")
@@ -51,8 +51,8 @@ public class HandledProducer {
             throw new IllegalArgumentException("serviceId must not be blank");
         }
 
-        if (serviceSiteName.isBlank()) {
-            throw new IllegalArgumentException("serviceSiteName must not be blank");
+        if (serviceDomain.isBlank()) {
+            throw new IllegalArgumentException("serviceDomain must not be blank");
         }
 
         log.info("Initializing HandledProducer...");
@@ -84,7 +84,7 @@ public class HandledProducer {
     private EventsHandledByService createGlobalEventsHandled() {
         return new EventsHandledByService(
                 serviceId,
-                serviceSiteName,
+                serviceDomain,
                 eventHandlers.getGlobalEventsHandled()
         );
     }
