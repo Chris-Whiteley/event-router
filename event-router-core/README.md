@@ -204,7 +204,7 @@ All routing decisions are made **centrally** by the router — producers and han
 
 ---
 
-### Summary
+### Domain Summary
 
 * Domains define **who can talk to whom**
 * Domains are **hierarchical**
@@ -225,28 +225,33 @@ Event Router intentionally separates:
 This keeps event producers informed without coupling them to infrastructure,
 threading, or transport concerns.
 
----
 ### What This Module Does Not Do
 
 This module deliberately does not:
 
-- Talk to Kafka or any messaging system
+* Talk to Kafka or any messaging system
+* Integrate with Micronaut, Spring, or other frameworks
+* Manage application lifecycle or dependency injection
 
-- Integrate with Micronaut, Spring, or other frameworks
+It also does **not** act as a general-purpose serialization framework.
 
-- Perform serialization or deserialization
+The core performs **minimal internal JSON encoding/decoding** of the Event Router envelope (`NamedEvent`) to support routing and remote dispatch.
+It does **not** define payload schemas, versioning, or transport formats — those concerns live in separate modules.
 
-- Manage application lifecycle or dependency injection
+### Event Payloads and Remote Dispatch
 
-Those concerns live in separate modules.
+When an event is routed to a remote service, the event (including its optional payload)
+is encoded as JSON.
 
----
-### Usage
+This means:
+- The event payload (`source`) must be JSON-serializable
+- Both the sending and receiving services must have access to the payload type
 
-Most users will not depend on `event-router-core` directly.
+The Event Router does not impose schemas or payload contracts — it simply transports
+the event envelope and payload as JSON. How payload compatibility is managed is left
+to the application.
 
-Instead, you will typically use the integration modules, such as
-`event-router-micronaut` and `event-router-kafka-micronaut`.
+
 
 ### Status
 

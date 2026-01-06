@@ -31,7 +31,7 @@
         <jackson.version>2.18.1</jackson.version>
         <cws.messaging.version>1.0.0</cws.messaging.version>
         <kafka.version>3.9.0</kafka.version>
-
+        <micronaut.version>4.2.1</micronaut.version>
 
         <!-- Plugin versions -->
         <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
@@ -45,6 +45,20 @@
             <dependency>
                 <groupId>io.github.chriswhiteley</groupId>
                 <artifactId>event-router-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Micronaut integration for Event Router -->
+            <dependency>
+                <groupId>io.github.chriswhiteley</groupId>
+                <artifactId>event-router-micronaut</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- Kafka transport implementation -->
+            <dependency>
+                <groupId>io.github.chriswhiteley</groupId>
+                <artifactId>event-router-kafka</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
