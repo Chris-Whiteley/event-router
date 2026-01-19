@@ -32,6 +32,7 @@
         <cws.messaging.version>1.0.0</cws.messaging.version>
         <kafka.version>3.9.0</kafka.version>
         <micronaut.version>4.2.1</micronaut.version>
+        <jakarta.version>2.0.1</jakarta.version>
 
         <!-- Plugin versions -->
         <maven.compiler.plugin.version>3.12.1</maven.compiler.plugin.version>
@@ -77,6 +78,13 @@
                 <scope>provided</scope>
             </dependency>
 
+            <!-- Jakarta Inject -->
+            <dependency>
+                <groupId>jakarta.inject</groupId>
+                <artifactId>jakarta.inject-api</artifactId>
+                <version>${jakarta.version}</version>
+            </dependency>
+
             <!-- Jackson BOM -->
             <dependency>
                 <groupId>com.fasterxml.jackson</groupId>
@@ -99,6 +107,7 @@
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
+
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>

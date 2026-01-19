@@ -1,8 +1,8 @@
-package io.github.chriswhiteley.eventrouter.global;
+package io.github.chriswhiteley.eventrouter.kafka;
 
 import io.github.chriswhiteley.eventrouter.Event;
 import io.github.chriswhiteley.eventrouter.NamedEvent;
-import io.github.chriswhiteley.eventrouter.global.util.TopicNameHelper;
+import io.github.chriswhiteley.eventrouter.kafka.util.TopicNameHelper;
 import io.github.chriswhiteley.messaging.kafka.AbstractKafkaChunkingConsumer;
 import lombok.extern.slf4j.Slf4j;
 

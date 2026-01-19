@@ -53,6 +53,18 @@
             <artifactId>micronaut-context</artifactId>
         </dependency>
 
+        <!-- Jakarta DI -->
+        <dependency>
+            <groupId>jakarta.inject</groupId>
+            <artifactId>jakarta.inject-api</artifactId>
+        </dependency>
+
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+
         <!-- Lombok (compile-time only) -->
         <dependency>
             <groupId>org.projectlombok</groupId>

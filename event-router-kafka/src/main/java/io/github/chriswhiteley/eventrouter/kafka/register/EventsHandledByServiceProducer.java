@@ -1,8 +1,8 @@
-package io.github.chriswhiteley.eventrouter.global.register;
+package io.github.chriswhiteley.eventrouter.kafka.register;
 
 import io.github.chriswhiteley.eventrouter.global.register.data.EventsHandledByService;
 import io.github.chriswhiteley.eventrouter.global.register.data.EventsHandledByServiceSerde;
-import io.github.chriswhiteley.eventrouter.global.util.TopicNameHelper;
+import io.github.chriswhiteley.eventrouter.kafka.util.TopicNameHelper;
 import io.github.chriswhiteley.messaging.kafka.AbstractKafkaProducer;
 import lombok.extern.slf4j.Slf4j;
 

@@ -2,10 +2,10 @@ package io.github.chriswhiteley.eventrouter.kafka.micronaut;
 
 import io.github.chriswhiteley.eventrouter.NamedEvent;
 import io.github.chriswhiteley.eventrouter.RemoteServiceEvent;
-import io.github.chriswhiteley.eventrouter.global.EventConsumer;
-import io.github.chriswhiteley.eventrouter.global.EventProducer;
-import io.github.chriswhiteley.eventrouter.global.register.EventsHandledByServiceConsumer;
-import io.github.chriswhiteley.eventrouter.global.register.EventsHandledByServiceProducer;
+import io.github.chriswhiteley.eventrouter.kafka.EventConsumer;
+import io.github.chriswhiteley.eventrouter.kafka.EventProducer;
+import io.github.chriswhiteley.eventrouter.kafka.register.EventsHandledByServiceConsumer;
+import io.github.chriswhiteley.eventrouter.kafka.register.EventsHandledByServiceProducer;
 import io.github.chriswhiteley.eventrouter.global.register.data.EventsHandledByService;
 import io.github.chriswhiteley.messaging.ClosableConsumer;
 import io.github.chriswhiteley.messaging.Producer;

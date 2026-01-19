@@ -1,9 +1,11 @@
-package io.github.chriswhiteley.eventrouter.global;
+package io.github.chriswhiteley.eventrouter.kafka;
 
 import io.github.chriswhiteley.eventrouter.RemoteServiceEvent;
-import io.github.chriswhiteley.eventrouter.global.util.TopicNameHelper;
+import io.github.chriswhiteley.eventrouter.kafka.util.TopicNameHelper;
 import io.github.chriswhiteley.messaging.kafka.AbstractKafkaChunkingProducer;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import io.github.chriswhiteley.eventrouter.global.SerializationException;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Properties;

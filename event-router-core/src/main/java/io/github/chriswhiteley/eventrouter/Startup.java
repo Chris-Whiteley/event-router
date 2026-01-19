@@ -32,9 +32,9 @@ public class Startup {
 
         log.info("EventRouter initialized successfully.");
 
-        NamedEvent onStartupEvent = new NamedEvent("onStartup");
-        eventDispatcher.dispatchEvent(onStartupEvent);
+        NamedEvent startedEVent = new NamedEvent("eventRouterStarted");
+        eventDispatcher.dispatchEvent(startedEVent);
 
-        log.info("Dispatched event: {}", onStartupEvent.getName());
+        log.info("Dispatched event: {}", startedEVent.getName());
     }
 }

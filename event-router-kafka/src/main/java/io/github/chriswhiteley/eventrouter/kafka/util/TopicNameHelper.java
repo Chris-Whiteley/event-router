@@ -1,4 +1,4 @@
-package io.github.chriswhiteley.eventrouter.global.util;
+package io.github.chriswhiteley.eventrouter.kafka.util;
 
 public class TopicNameHelper {
 

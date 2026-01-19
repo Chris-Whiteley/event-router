@@ -1,9 +1,12 @@
-package io.github.chriswhiteley.eventrouter.global.register.data;
+package io.github.chriswhiteley.eventrouter.kafka.register.data;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.Serde;
 import org.apache.kafka.common.serialization.Serializer;
+import io.github.chriswhiteley.eventrouter.global.register.data.EventsHandledByService;
+import io.github.chriswhiteley.eventrouter.global.register.data.EventsHandledByServiceSerde;
+
 
 import java.util.Map;
 
